@@ -1,3 +1,3 @@
-E:/CUBEMX/h750_blink/cmake-build-debug/CMakeFiles/h750_blink.elf.dir
-E:/CUBEMX/h750_blink/cmake-build-debug/CMakeFiles/edit_cache.dir
-E:/CUBEMX/h750_blink/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+E:/CUBEMX/my_repository/h750_blink/cmake-build-debug/CMakeFiles/h750_blink.elf.dir
+E:/CUBEMX/my_repository/h750_blink/cmake-build-debug/CMakeFiles/edit_cache.dir
+E:/CUBEMX/my_repository/h750_blink/cmake-build-debug/CMakeFiles/rebuild_cache.dir

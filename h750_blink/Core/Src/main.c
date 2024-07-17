@@ -154,6 +154,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+        for (;;);
 //    for(;;){
 //        error_k230_x=kalman_filter1(X-255);
 //        printf("%d, %d\n",X,error_k230_x);

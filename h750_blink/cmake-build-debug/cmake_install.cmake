@@ -1,4 +1,4 @@
-# Install script for directory: E:/CUBEMX/h750_blink
+# Install script for directory: E:/CUBEMX/my_repository/h750_blink
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "E:/CUBEMX/h750_blink/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "E:/CUBEMX/my_repository/h750_blink/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
