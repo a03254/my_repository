@@ -132,7 +132,7 @@ void Error_Handler(void);
 
 #define Pi 3.1415916f
 
-
+#define SIGHT_RANGE 30
 #define position0 __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 2450)
 #define position1 __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_4, 1430)
 #define position2 __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_4, 1100)

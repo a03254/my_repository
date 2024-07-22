@@ -40,7 +40,7 @@
 void turnleft_pid(void);
 void car_right_pid(unsigned int gom);
 void car_left_pid(unsigned int gom);
-
+void normal_pid(float target_data);
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -75,7 +75,7 @@ union un{
     float data;
 };
 union un IMU_data;
-
+ float initial_angel;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -148,37 +148,163 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-    while (1)
-    {
+    QRCODE[0]=3;
+    QRCODE[1]=2;
+    QRCODE[2]=1;
+    while (1) {
 
-    /* USER CODE END WHILE */
+        /* USER CODE END WHILE */
 
-    /* USER CODE BEGIN 3 */
-        for (;;);
-//    for(;;){
-//        error_k230_x=kalman_filter1(X-255);
-//        printf("%d, %d\n",X,error_k230_x);
-//    }
-
-position0;
-//        while(1) {
-//
-//    printf("%d, %d, %d, %d\n", color, X, Y, r);
-//}
+        /* USER CODE BEGIN 3 */
         LCD_DrawLine(80, 40, 80, 80);//????+
         LCD_DrawLine(70, 60, 90, 60);
+
+
         delay_ms(3000);
         position0;
-        //原地旋转4圈
+        servo_open;
+        initial_angel = IMU_data.data;
 
-//        car_right_pid(2000);
-//        delay_ms(500);
-//        car_left_pid(2000);
-//        for(;;);
-//        turnleft_pid();
+
+        car_left_pid(1000);
+        normal_pid(0);
+
+        gotarget_s(4800);
+//        while (QRCODE[0] == 0)//等待二维码识别
+//        {
+//            microforward(1);
+//        }
+        normal_pid(0);
+        gotarget_s(4425);
+        car_right_pid(400);
+        normal_pid(0);
+
+        while (color != QRCODE[0])
+        {
+            // printf("color:%d\n",color);
+        }
+
+        error_k230_x = X - 180;
+        error_k230_y = Y - 102;
+//        while (error_k230_x >= SIGHT_RANGE || error_k230_x <= -SIGHT_RANGE||error_k230_y >= SIGHT_RANGE || error_k230_y <= -SIGHT_RANGE){
+//            error_k230_x = X - 222;
+//            error_k230_y = Y - 102;
+//        }
+            while (error_k230_x >= 3 || error_k230_x <= -3||error_k230_y >= 3 || error_k230_y <= -3) {
+                if (error_k230_x < 0) {
+                    microleft(1);
+                }
+
+                if (error_k230_x > 0) {
+                    microright(1);
+                }
+
+                if (error_k230_y > 0) {
+                    microback(1);
+                }
+
+                if (error_k230_y < 0) {
+                    microforward(1);
+                }
+                delay_ms(5);
+                error_k230_x = X - 222;
+                error_k230_y = Y - 102;
+            }
+            //fistpick();
+            switch (QRCODE[0]) {
+                case 1:
+                    //layin1();
+                    position1;
+                    break;
+                case 2:
+                    //layin2();
+                    position2;
+                    break;
+                case 3:
+                    //layin3();
+                    position3;
+                    break;
+            }
+            position0;
+            delay_ms(500);
+            for(uint8_t i = 1; i < 3; i++) {
+                while (color != QRCODE[i]);
+                while (error_k230_x >= SIGHT_RANGE || error_k230_x <= -SIGHT_RANGE||error_k230_y >= SIGHT_RANGE || error_k230_y <= -SIGHT_RANGE){
+                    error_k230_x = X - 222;
+                    error_k230_y = Y - 102;
+                }
+                //fistpick();
+                switch (QRCODE[i]) {
+                    case 1:
+                        //layin1();
+                        position1;
+                        break;
+                    case 2:
+                        //layin2();
+                        position2;
+                        break;
+                    case 3:
+                        //layin3();
+                        position3;
+                        break;
+                }
+                position0;
+                delay_ms(500);
+            }
+
+        car_left_pid(400);
+        normal_pid(0);
+
+        gotarget_s(2560);
+        normal_pid(0);
+
+        turnleft(2060);
+        normal_pid(90);
+        initial_angel=IMU_data.data;
+
+        gotarget_s(4850);
+        normal_pid(0);
+        car_right_pid(800);
+        normal_pid(0);
+        layout1_temp();
+        gotarget_s(960);
+        normal_pid(0);
+        layout2_temp();
+        gotarget_s(960);
+        normal_pid(0);
+        layout3_temp();
+        car_left_pid(800);
+        gotarget_s(3800);
+        turnleft_pid();
+        normal_pid(90);
+        initial_angel=IMU_data.data;
+        gotarget_s(4100);
+        normal_pid(0);
+        car_right_pid(380);
+        normal_pid(0);
+        layout1_temp();
+        gotarget_s(960);
+        normal_pid(0);
+        layout2_temp();
+        gotarget_s(960);
+        normal_pid(0);
+        layout3_temp();
+        car_left_pid(380);
+        gotarget_s(5500);
+        turnleft_pid();
+        normal_pid(90);
+        initial_angel=IMU_data.data;
+        gotarget_s(11000);
+        normal_pid(0);
+
+
+        for (;;);
+        delay_ms(500);
+        car_left_pid(2000);
+        turnleft_pid();
         servo_open;
         for (;;){
-        error_k230_x=kalman_filter1(X)-255;
+        error_k230_x=Y-196;
         while (error_k230_x>=6||error_k230_x<=-6) {
                 if (error_k230_x >0) {
                     microback(1);
@@ -201,11 +327,11 @@ position0;
         layin1();
         for (;;);
         servo_open;
-        layout1();
+        layout1_temp();
         gotarget_s(1000);
-        layout2();
+        layout2_temp();
         gotarget_s(1000);
-        layout3();
+        layout3_temp();
 
         for(;;);
         secondpick();
@@ -248,92 +374,7 @@ position0;
         delay_ms(50);//准备夹物料
         elevator_down(1700);
         car_right(200);//靠近物料
-        fistpick1();
-        layin1();
-        fistpick();
-        layin2();
-        fistpick();
-        layin3();
 
-        car_left(200);
-
-        gotarget_s(2560);
-
-        turnleft(2235);
-
-        gotarget_s(4850);
-
-        car_right(580);
-
-        layout1();
-
-        gotarget_s(960);
-
-        layout2();
-
-        gotarget_s(960);
-
-        layout3();
-
-
-        secondpick();
-        layin3();
-        gotarget_s_back(960);
-        secondpick();
-        layin2();
-        gotarget_s_back(960);
-        secondpick();
-        layin1();
-        car_left(580);
-        gotarget_s(5720);
-
-        turnleft(2235);
-
-        gotarget_s(4100);
-        delay_ms(500);
-
-        car_right(580);
-
-        layout1();
-
-        gotarget_s(960);
-
-        layout2();
-
-        gotarget_s(960);
-
-        layout3();
-
-        car_left(500);
-        gotarget_s(5740);
-        turnleft(2235);
-        gotarget_s(12058);
-        while(1)
-        {
-
-            printf("%d, %d, %d, %d\n",color, X, Y, r);
-
-        }
-        delay_ms(200);
-        //elevator_up();
-        delay_ms(200);
-        //elevator_down();
-        gofistline();
-        delay_ms(200);
-        turnleft(2235);
-        delay_ms(200);
-        gosecondline();
-        delay_ms(200);
-        turnleft(2235);
-        delay_ms(200);
-        gofistline();
-        delay_ms(200);
-        turnleft(2235);
-        delay_ms(200);
-        gosecondline();
-        delay_ms(200);
-        turnleft(2235);
-        for(;;);
 
 
     }
@@ -482,19 +523,20 @@ void Get_Data(void)
     X = data_Integer_calculate(data_X_len, data_X_S);
     Y = data_Integer_calculate(data_Y_len, data_Y_S);
     r = data_Integer_calculate(data_r_len, data_r_S);
-
+    //printf("%d,%d,%d,%d\r\n", color,X,Y, r);
 }
 void turnleft_pid(void){
 
-    last_data = IMU_data.data;
+    last_data = initial_angel;
     turnleft(2060);
+    delay_ms(100);
     delta_data = IMU_data.data - last_data;
     if (last_data > 0 && IMU_data.data < 0) {
         delta_data += 360;//解决跨越0度的问题
     }
     error_data = delta_data - expect_data;//计算误差
-    delay_ms(100);
-    while ((error_data > 0.05 || error_data < -0.05)) {
+
+    while ((error_data > 0.5 || error_data < -0.5)) {
         if(motionflag) {
             motionflag = 0;
             if (error_data > 0) {
@@ -505,16 +547,43 @@ void turnleft_pid(void){
                 microturnleft((-error_data) * 10);
             }
 
-            delta_data = IMU_data.data - last_data;//做差
-            if (last_data > 0 && IMU_data.data < 0) {
-                delta_data += 360;//解决跨越0度的问题
-            }
-            error_data = delta_data - expect_data;//计算误差
+
             //printf("error_data：%f\n", error_data);
         }
+        delta_data = IMU_data.data - last_data;//做差
+        if (last_data > 0 && IMU_data.data < 0) {
+            delta_data += 360;//解决跨越0度的问题
+        }
+        error_data = delta_data - expect_data;//计算误差
     }
 }
-
+void normal_pid(float target_data) {
+    last_data = initial_angel + target_data;
+    delta_data = IMU_data.data - last_data;
+    if (last_data > 0 && IMU_data.data < 0) {
+        delta_data += 360;//解决跨越0度的问题
+    }
+    error_data = delta_data;//计算误差
+    while (error_data > 0.5 || error_data < -0.5) {
+        if (motionflag) {
+            motionflag = 0;
+            printf("%f\n",error_data);
+            if (error_data > 0) {
+                //microturnright(5);
+                microturnright(error_data * 12);
+            } else {
+                //microturnleft(5);
+                microturnleft((-error_data) * 12);
+            }
+            //printf("error_data：%f\n", error_data);
+        }
+        delta_data = IMU_data.data - last_data;//做差
+        if (last_data > 0 && IMU_data.data < 0 && delta_data<-180) {
+            delta_data += 360;//解决跨越0度的问题
+        }
+        error_data = delta_data;//计算误差
+    }
+}
 void car_right_pid(unsigned int gom){
     last_data = IMU_data.data;
     car_right(gom);
@@ -523,7 +592,7 @@ void car_right_pid(unsigned int gom){
         delta_data += 360;//解决跨越0度的问题
     }
     error_data = delta_data;//计算误差
-    while ((error_data > 0.05 || error_data < -0.05)) {
+    while ((error_data > 0.5 || error_data < -0.5)) {
         if(motionflag) {
             motionflag = 0;
             if (error_data > 0) {
@@ -534,13 +603,14 @@ void car_right_pid(unsigned int gom){
                 microturnleft((-error_data) * 10);
             }
 
-            delta_data = IMU_data.data - last_data;//做差
-            if (last_data > 0 && IMU_data.data < 0) {
-                delta_data += 360;//解决跨越0度的问题
-            }
-            error_data = delta_data;//计算误差
-            //printf("error_data：%f\n", error_data);
+
         }
+        delta_data = IMU_data.data - last_data;//做差
+        if (last_data > 0 && IMU_data.data < 0 && delta_data<-180) {
+            delta_data += 360;//解决跨越0度的问题
+        }
+        error_data = delta_data;//计算误差
+        //printf("error_data：%f\n", error_data);
     }
 }
 void car_left_pid(unsigned int gom){
@@ -551,7 +621,7 @@ void car_left_pid(unsigned int gom){
         delta_data += 360;//解决跨越0度的问题
     }
     error_data = delta_data;//计算误差
-    while ((error_data > 0.05 || error_data < -0.05)) {
+    while ((error_data > 0.1 || error_data < -0.1)) {
         if(motionflag) {
             motionflag = 0;
             if (error_data > 0) {
@@ -562,13 +632,14 @@ void car_left_pid(unsigned int gom){
                 microturnleft((-error_data) * 10);
             }
 
-            delta_data = IMU_data.data - last_data;//做差
-            if (last_data > 0 && IMU_data.data < 0) {
-                delta_data += 360;//解决跨越0度的问题
-            }
-            error_data = delta_data;//计算误差
-            //printf("error_data：%f\n", error_data);
+
         }
+        delta_data = IMU_data.data - last_data;//做差
+        if (last_data > 0 && IMU_data.data < 0&&delta_data<-180) {
+            delta_data += 360;//解决跨越0度的问题
+        }
+        error_data = delta_data;//计算误差
+        //printf("error_data：%f\n", error_data);
     }
 }
 // ???????????????÷????
@@ -799,7 +870,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         LCD_DrawLine(80, 40, 80, 80);//????+
         LCD_DrawLine(70, 60, 90, 60);
 
-        HAL_UART_Receive_IT(&huart1,(uint8_t *)USART1_RXbuff, 7);
+        //HAL_UART_Receive_IT(&huart1,(uint8_t *)USART1_RXbuff, 7);
     }
     if (huart->Instance == USART3)  // ??????·???????2?ú?ú??????
     {
@@ -828,6 +899,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         IMU_data.buff[2] = IMU_RxBuffer[2];
         IMU_data.buff[3] = IMU_RxBuffer[3];
         motionflag = 1;
+        printf("IMU_data:%f\n",IMU_data.data);
         HAL_UART_Receive_IT(&huart5, (uint8_t *)IMU_RxBuffer, 4);  // ??????????????????????????×???
     }
 }

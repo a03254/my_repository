@@ -8,7 +8,7 @@ double kalman_filter1( double ADC_Value1 )
     static double kalman_adc_old1 = 0;
     static double P11;
     static double Q1 = 0.003;
-    static double R1 = 180;
+    static double R1 = 1;
     static double Kg1 = 0;
     static double P1 = 1;
     NowData1 = ADC_Value1;

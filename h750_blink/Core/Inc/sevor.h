@@ -18,5 +18,7 @@ void layin3();
 void layout1();
 void layout2();
 void layout3();
-
+void layout1_temp();
+void layout2_temp();
+void layout3_temp();
 #endif

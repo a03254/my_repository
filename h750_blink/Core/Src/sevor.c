@@ -66,10 +66,10 @@ void layall() {
 
 
 void fistpick(){
-    elevator_down(3000);
+    elevator_down(3200);
     servo_close;
 
-    elevator_up(3000);
+    elevator_up(3200);
 }
 
 void secondpick(){
@@ -146,6 +146,41 @@ void layout3(){
     servo_open;
     delay_ms(50);
     elevator_up(7000);
-
 }
 
+void layout1_temp(){
+    position1;
+    delay_ms(350);
+    servo_open;
+    delay_ms(500);
+    servo_close;
+    position0;
+    delay_ms(500);
+    servo_open;
+    delay_ms(50);
+
+}
+void layout2_temp(){
+    position2;
+    delay_ms(600);
+    servo_open;
+    delay_ms(500);
+    servo_close;
+    position0;
+    delay_ms(500);
+    servo_open;
+    delay_ms(50);
+
+}
+void layout3_temp(){
+    position3;
+    delay_ms(1000);
+    servo_open;
+    delay_ms(500);
+    servo_close;
+    position0;
+    delay_ms(500);
+    servo_open;
+    delay_ms(50);
+
+}

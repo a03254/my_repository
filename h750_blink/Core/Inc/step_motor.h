@@ -35,4 +35,7 @@ void microturnleft(unsigned int gom);
 void microturnright(unsigned int gom);
 void microforward(unsigned int gom);
 void microback(unsigned int gom);
+void microleft(unsigned int gom);
+void microright(unsigned int gom);
+
 #endif

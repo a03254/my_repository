@@ -214,6 +214,52 @@ void microback(unsigned int gom)
     }
 }
 
+void microleft(unsigned int gom)
+{
+    motor1back;
+    motor4back;
+    motor2forward;
+    motor3forward;
+
+    for(temp1=0 ;temp1<gom;temp1++){
+        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+        HAL_GPIO_WritePin(motor1_GPIO_Port, motor1_Pin, SET);
+        HAL_GPIO_WritePin(motor2_GPIO_Port, motor2_Pin, SET);
+        HAL_GPIO_WritePin(motor3_GPIO_Port, motor3_Pin, SET);
+        HAL_GPIO_WritePin(motor4_GPIO_Port, motor4_Pin, SET);
+        delay_us(150);
+        HAL_GPIO_WritePin(motor1_GPIO_Port, motor1_Pin, RESET);
+        HAL_GPIO_WritePin(motor2_GPIO_Port, motor2_Pin, RESET);
+        HAL_GPIO_WritePin(motor3_GPIO_Port, motor3_Pin, RESET);
+        HAL_GPIO_WritePin(motor4_GPIO_Port, motor4_Pin, RESET);
+        delay_us(2000);
+
+    }
+}
+
+void microright(unsigned int gom)
+{
+    motor1forward;
+    motor4forward;
+    motor2back;
+    motor3back;
+
+    for(temp1=0 ;temp1<gom;temp1++){
+        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+        HAL_GPIO_WritePin(motor1_GPIO_Port, motor1_Pin, SET);
+        HAL_GPIO_WritePin(motor2_GPIO_Port, motor2_Pin, SET);
+        HAL_GPIO_WritePin(motor3_GPIO_Port, motor3_Pin, SET);
+        HAL_GPIO_WritePin(motor4_GPIO_Port, motor4_Pin, SET);
+        delay_us(150);
+        HAL_GPIO_WritePin(motor1_GPIO_Port, motor1_Pin, RESET);
+        HAL_GPIO_WritePin(motor2_GPIO_Port, motor2_Pin, RESET);
+        HAL_GPIO_WritePin(motor3_GPIO_Port, motor3_Pin, RESET);
+        HAL_GPIO_WritePin(motor4_GPIO_Port, motor4_Pin, RESET);
+        delay_us(2000);
+
+    }
+}
+
 void turnleft(unsigned int gom)
 {
     motor1back;
