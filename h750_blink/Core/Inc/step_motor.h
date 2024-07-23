@@ -22,6 +22,7 @@
 
 void goonemetre(unsigned int gom);
 void turnleft(unsigned int gom);
+void turnright(unsigned int gom);
 void gosecondline();
 void gofistline();
 void elevator_up(unsigned int gom);

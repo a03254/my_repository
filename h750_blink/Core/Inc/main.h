@@ -133,10 +133,10 @@ void Error_Handler(void);
 #define Pi 3.1415916f
 
 #define SIGHT_RANGE 30
-#define position0 __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 2450)
-#define position1 __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_4, 1430)
-#define position2 __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_4, 1100)
-#define position3 __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_4, 750)
+#define position0 __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 2350)
+#define position1 __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_4, 1360)
+#define position2 __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_4, 1030)
+#define position3 __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_4, 680)
 //FDILINKÉÏÎ»»úÍ¨Ñ¶ÐÄÌø°ü³¤¶È
 #define RESERVE_LEN 25
 

@@ -3,6 +3,9 @@
 #include "usart.h"
 #include "gpio.h"
 #include "sevor.h"
+extern uint16_t X;
+extern uint16_t Y;
+
 void pickall() {
     __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 250);
     servo_open;
@@ -76,6 +79,39 @@ void secondpick(){
     elevator_down(7000);
     servo_close;
     elevator_up(7000);
+}
+
+void microposition(uint16_t *x, uint16_t *y)
+{
+
+    int16_t error_k230_x = *x - 222;
+    int16_t error_k230_y = *y - 102;
+//        while (error_k230_x >= SIGHT_RANGE || error_k230_x <= -SIGHT_RANGE||error_k230_y >= SIGHT_RANGE || error_k230_y <= -SIGHT_RANGE){
+//            error_k230_x = X - 222;
+//            error_k230_y = Y - 102;
+//        }
+    while (error_k230_x >= 3 || error_k230_x <= -3||error_k230_y >= 3 || error_k230_y <= -3) {
+        if (error_k230_x < 0) {
+            microleft(1);
+        }
+
+        if (error_k230_x > 0) {
+            microright(1);
+        }
+
+        if (error_k230_y > 0) {
+            microback(1);
+        }
+
+        if (error_k230_y < 0) {
+            microforward(1);
+        }
+        delay_ms(5);
+        error_k230_x = *x - 222;
+        error_k230_y = *y - 102;
+        printf("%d,%d\r\n",*x,*y);
+    }
+    printf("**********************************\n");
 }
 
 

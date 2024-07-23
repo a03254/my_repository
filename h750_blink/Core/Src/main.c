@@ -68,8 +68,8 @@ uint8_t USART1_RXbuff[20];
 uint8_t code[3];
 uint8_t IMU_RxBuffer[4];
 uint8_t QRCODE[6];
-int16_t error_k230_x;
-int16_t error_k230_y;
+//int16_t error_k230_x;
+//int16_t error_k230_y;
 union un{
     uint8_t buff[4];
     float data;
@@ -81,8 +81,9 @@ union un IMU_data;
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint8_t color;
-uint16_t X;
-uint16_t Y;
+volatile uint16_t X=0;
+volatile uint16_t Y=0;
+
 uint16_t r;
 uint8_t motionflag;
 uint8_t k230_RxBuffer[1];   //????????????
@@ -100,6 +101,7 @@ float k230_kp=0.5;
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 
 
@@ -148,20 +150,30 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-    QRCODE[0]=3;
-    QRCODE[1]=2;
-    QRCODE[2]=1;
+//    QRCODE[0]=3;
+//    QRCODE[1]=2;
+//    QRCODE[2]=1;
     while (1) {
 
-        /* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
-        /* USER CODE BEGIN 3 */
+    /* USER CODE BEGIN 3 */
+
+
         LCD_DrawLine(80, 40, 80, 80);//????+
         LCD_DrawLine(70, 60, 90, 60);
 
 
         delay_ms(3000);
         position0;
+        while (QRCODE[0] == 0);//等待二维码识别
+        while (color != QRCODE[0]);
+////      {
+////      // printf("color:%d\n",color);
+////      }
+        microposition(&X, &Y);
+        fistpick();
+        for(;;);
         servo_open;
         initial_angel = IMU_data.data;
 
@@ -169,88 +181,65 @@ int main(void)
         car_left_pid(1000);
         normal_pid(0);
 
-        gotarget_s(4800);
+
+
 //        while (QRCODE[0] == 0)//等待二维码识别
 //        {
 //            microforward(1);
 //        }
+
+        
+        gotarget_s(9225);
         normal_pid(0);
-        gotarget_s(4425);
         car_right_pid(400);
         normal_pid(0);
 
-        while (color != QRCODE[0])
-        {
-            // printf("color:%d\n",color);
+        while (color != QRCODE[0]);
+//      {
+//      // printf("color:%d\n",color);
+//      }
+
+        microposition(&X, &Y);
+        fistpick();
+        switch (QRCODE[0]) {
+            case 1:
+                layin1();
+//                position1;
+                break;
+            case 2:
+                layin2();
+//                position2;
+                break;
+            case 3:
+                layin3();
+//                position3;
+                break;
         }
 
-        error_k230_x = X - 180;
-        error_k230_y = Y - 102;
-//        while (error_k230_x >= SIGHT_RANGE || error_k230_x <= -SIGHT_RANGE||error_k230_y >= SIGHT_RANGE || error_k230_y <= -SIGHT_RANGE){
-//            error_k230_x = X - 222;
-//            error_k230_y = Y - 102;
-//        }
-            while (error_k230_x >= 3 || error_k230_x <= -3||error_k230_y >= 3 || error_k230_y <= -3) {
-                if (error_k230_x < 0) {
-                    microleft(1);
-                }
+        position0;
+        delay_ms(100);
+        for (uint8_t i = 1; i < 3; i++) {
+            while (color != QRCODE[i]);
 
-                if (error_k230_x > 0) {
-                    microright(1);
-                }
-
-                if (error_k230_y > 0) {
-                    microback(1);
-                }
-
-                if (error_k230_y < 0) {
-                    microforward(1);
-                }
-                delay_ms(5);
-                error_k230_x = X - 222;
-                error_k230_y = Y - 102;
-            }
-            //fistpick();
-            switch (QRCODE[0]) {
+            fistpick();
+            switch (QRCODE[i]) {
                 case 1:
-                    //layin1();
-                    position1;
+                    layin1();
+//                    position1;
                     break;
                 case 2:
-                    //layin2();
-                    position2;
+                    layin2();
+//                    position2;
                     break;
                 case 3:
-                    //layin3();
-                    position3;
+                    layin3();
+//                    position3;
                     break;
             }
+
             position0;
-            delay_ms(500);
-            for(uint8_t i = 1; i < 3; i++) {
-                while (color != QRCODE[i]);
-                while (error_k230_x >= SIGHT_RANGE || error_k230_x <= -SIGHT_RANGE||error_k230_y >= SIGHT_RANGE || error_k230_y <= -SIGHT_RANGE){
-                    error_k230_x = X - 222;
-                    error_k230_y = Y - 102;
-                }
-                //fistpick();
-                switch (QRCODE[i]) {
-                    case 1:
-                        //layin1();
-                        position1;
-                        break;
-                    case 2:
-                        //layin2();
-                        position2;
-                        break;
-                    case 3:
-                        //layin3();
-                        position3;
-                        break;
-                }
-                position0;
-                delay_ms(500);
-            }
+            delay_ms(100);
+        }
 
         car_left_pid(400);
         normal_pid(0);
@@ -260,37 +249,744 @@ int main(void)
 
         turnleft(2060);
         normal_pid(90);
-        initial_angel=IMU_data.data;
+        initial_angel = IMU_data.data;
 
         gotarget_s(4850);
         normal_pid(0);
         car_right_pid(800);
         normal_pid(0);
-        layout1_temp();
-        gotarget_s(960);
-        normal_pid(0);
-        layout2_temp();
-        gotarget_s(960);
-        normal_pid(0);
-        layout3_temp();
+
+        if (QRCODE[0] == 1 && QRCODE[1] == 2 && QRCODE[2] == 3) {
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            fistpick();
+            layin1();
+            position0;
+            normal_pid(0);
+            gotarget_s(950);
+            fistpick();
+            layin2();
+            position0;
+            normal_pid(0);
+            gotarget_s(950);
+            fistpick();
+            layin3();
+            position0;
+        }
+
+        if (QRCODE[0] == 1 && QRCODE[1] == 3 && QRCODE[2] == 2) {
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin1();
+            position0;
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            fistpick();
+            layin3();
+            position0;
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin2();
+            position0;
+            normal_pid(0);
+            gotarget_s(950);
+        }
+
+        if (QRCODE[0] == 2 && QRCODE[1] == 1 && QRCODE[2] == 3) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin2();
+            position0;
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin1();
+            position0;
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            fistpick();
+            layin3();
+            position0;
+        }
+
+        if (QRCODE[0] == 2 && QRCODE[1] == 3 && QRCODE[2] == 1) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin2();
+            position0;
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin3();
+            position0;
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            fistpick();
+            layin1();
+            position0;
+            normal_pid(0);
+            gotarget_s(1900);
+
+        }
+
+        if (QRCODE[0] == 3 && QRCODE[1] == 1 && QRCODE[2] == 2) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin3();
+            position0;
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            fistpick();
+            layin1();
+            position0;
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin2();
+            position0;
+            normal_pid(0);
+            gotarget_s(950);
+        }
+
+        if (QRCODE[0] == 3 && QRCODE[1] == 2 && QRCODE[2] == 1) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            fistpick();
+            layin3();
+            position0;
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin2();
+            position0;
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin1();
+            position0;
+            normal_pid(0);
+            gotarget_s(1900);
+
+        }
+
         car_left_pid(800);
+        normal_pid(0);
         gotarget_s(3800);
+        normal_pid(0);
         turnleft_pid();
         normal_pid(90);
         initial_angel=IMU_data.data;
-        gotarget_s(4100);
+        gotarget_s(4000);
         normal_pid(0);
-        car_right_pid(380);
+        car_right_pid(300);
         normal_pid(0);
-        layout1_temp();
-        gotarget_s(960);
+
+
+        if (QRCODE[0] == 1 && QRCODE[1] == 2 && QRCODE[2] == 3) {
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+        }
+
+        if (QRCODE[0] == 1 && QRCODE[1] == 3 && QRCODE[2] == 2) {
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+
+        }
+
+        if (QRCODE[0] == 2 && QRCODE[1] == 1 && QRCODE[2] == 3) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+
+        }
+
+        if (QRCODE[0] == 2 && QRCODE[1] == 3 && QRCODE[2] == 1) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            layout1();
+
+
+
+        }
+
+        if (QRCODE[0] == 3 && QRCODE[1] == 1 && QRCODE[2] == 2) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+        }
+
+        if (QRCODE[0] == 3 && QRCODE[1] == 2 && QRCODE[2] == 1) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout1();
+
+        }
+
+        car_left_pid(300);
         normal_pid(0);
-        layout2_temp();
-        gotarget_s(960);
+        gotarget_s_back(4000);
         normal_pid(0);
-        layout3_temp();
-        car_left_pid(380);
-        gotarget_s(5500);
+        turnright(2070);
+        delay_ms(100);
+        normal_pid(90);
+        initial_angel=IMU_data.data;
+
+        gotarget_s_back(10550);
+        normal_pid(0);
+        turnright(2070);
+        delay_ms(100);
+        normal_pid(90);
+        initial_angel=IMU_data.data;
+        gotarget_s_back(2560);
+        normal_pid(0);
+        car_right_pid(400);
+
+        while (color != QRCODE[4]);
+//      {
+//      // printf("color:%d\n",color);
+//      }
+
+        microposition(&X, &Y);
+        fistpick();
+        switch (QRCODE[4]) {
+            case 1:
+                layin1();
+//                position1;
+                break;
+            case 2:
+                layin2();
+//                position2;
+                break;
+            case 3:
+                layin3();
+//                position3;
+                break;
+        }
+
+        position0;
+        delay_ms(100);
+        for (uint8_t i = 5; i < 7; i++) {
+            while (color != QRCODE[i]);
+
+            fistpick();
+            switch (QRCODE[i]) {
+                case 1:
+                    layin1();
+//                    position1;
+                    break;
+                case 2:
+                    layin2();
+//                    position2;
+                    break;
+                case 3:
+                    layin3();
+//                    position3;
+                    break;
+            }
+
+            position0;
+            delay_ms(100);
+        }
+
+        car_left_pid(400);
+        normal_pid(0);
+
+        gotarget_s(2560);
+        normal_pid(0);
+
+        turnleft(2060);
+        normal_pid(90);
+        initial_angel = IMU_data.data;
+
+        gotarget_s(4850);
+        normal_pid(0);
+        car_right_pid(800);
+        normal_pid(0);
+
+        if (QRCODE[0] == 1 && QRCODE[1] == 2 && QRCODE[2] == 3) {
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            fistpick();
+            layin1();
+            position0;
+            normal_pid(0);
+            gotarget_s(950);
+            fistpick();
+            layin2();
+            position0;
+            normal_pid(0);
+            gotarget_s(950);
+            fistpick();
+            layin3();
+            position0;
+        }
+
+        if (QRCODE[0] == 1 && QRCODE[1] == 3 && QRCODE[2] == 2) {
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin1();
+            position0;
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            fistpick();
+            layin3();
+            position0;
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin2();
+            position0;
+            normal_pid(0);
+            gotarget_s(950);
+        }
+
+        if (QRCODE[0] == 2 && QRCODE[1] == 1 && QRCODE[2] == 3) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin2();
+            position0;
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin1();
+            position0;
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            fistpick();
+            layin3();
+            position0;
+        }
+
+        if (QRCODE[0] == 2 && QRCODE[1] == 3 && QRCODE[2] == 1) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin2();
+            position0;
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin3();
+            position0;
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            fistpick();
+            layin1();
+            position0;
+            normal_pid(0);
+            gotarget_s(1900);
+
+        }
+
+        if (QRCODE[0] == 3 && QRCODE[1] == 1 && QRCODE[2] == 2) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin3();
+            position0;
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            fistpick();
+            layin1();
+            position0;
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin2();
+            position0;
+            normal_pid(0);
+            gotarget_s(950);
+        }
+
+        if (QRCODE[0] == 3 && QRCODE[1] == 2 && QRCODE[2] == 1) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            fistpick();
+            layin3();
+            position0;
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin2();
+            position0;
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            fistpick();
+            layin1();
+            position0;
+            normal_pid(0);
+            gotarget_s(1900);
+
+        }
+
+        car_left_pid(800);
+        normal_pid(0);
+        gotarget_s(3800);
+        normal_pid(0);
+        turnleft_pid();
+        normal_pid(90);
+        initial_angel=IMU_data.data;
+        gotarget_s(4000);
+        normal_pid(0);
+        car_right_pid(300);
+        normal_pid(0);
+
+
+        if (QRCODE[0] == 1 && QRCODE[1] == 2 && QRCODE[2] == 3) {
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+        }
+
+        if (QRCODE[0] == 1 && QRCODE[1] == 3 && QRCODE[2] == 2) {
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+
+        }
+
+        if (QRCODE[0] == 2 && QRCODE[1] == 1 && QRCODE[2] == 3) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+
+        }
+
+        if (QRCODE[0] == 2 && QRCODE[1] == 3 && QRCODE[2] == 1) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            layout1();
+
+
+
+        }
+
+        if (QRCODE[0] == 3 && QRCODE[1] == 1 && QRCODE[2] == 2) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(1900);
+            microposition(&X, &Y);
+            layout1();
+            normal_pid(0);
+            gotarget_s(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+        }
+
+        if (QRCODE[0] == 3 && QRCODE[1] == 2 && QRCODE[2] == 1) {
+            microposition(&X, &Y);
+            normal_pid(0);
+            gotarget_s(1900);
+            microposition(&X, &Y);
+            layout3();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout2();
+            normal_pid(0);
+            gotarget_s_back(950);
+            microposition(&X, &Y);
+            layout1();
+
+        }
+
+        car_left_pid(300);
+        normal_pid(0);
+
+        gotarget_s(6000);
         turnleft_pid();
         normal_pid(90);
         initial_angel=IMU_data.data;
@@ -298,25 +994,16 @@ int main(void)
         normal_pid(0);
 
 
+
+
+
         for (;;);
         delay_ms(500);
         car_left_pid(2000);
         turnleft_pid();
         servo_open;
-        for (;;){
-        error_k230_x=Y-196;
-        while (error_k230_x>=6||error_k230_x<=-6) {
-                if (error_k230_x >0) {
-                    microback(1);
-                }
-                if (error_k230_x <0) {
-                    microforward(1);
-                }
-                delay_ms(10);
-                error_k230_x=kalman_filter1(X-255);
-            }
-            printf("%d, %d\n",X, error_k230_x);
-        }
+        for (;;);
+
         for (;;);
         delay_ms(1000);
         car_left_pid(1000);
@@ -523,7 +1210,7 @@ void Get_Data(void)
     X = data_Integer_calculate(data_X_len, data_X_S);
     Y = data_Integer_calculate(data_Y_len, data_Y_S);
     r = data_Integer_calculate(data_r_len, data_r_S);
-    //printf("%d,%d,%d,%d\r\n", color,X,Y, r);
+    // printf("%d,%d,%d,%d\r\n", color,X,Y, r);
 }
 void turnleft_pid(void){
 
@@ -531,7 +1218,7 @@ void turnleft_pid(void){
     turnleft(2060);
     delay_ms(100);
     delta_data = IMU_data.data - last_data;
-    if (last_data > 0 && IMU_data.data < 0) {
+    if (last_data > 0 && IMU_data.data < 0 &&  delta_data<-180) {
         delta_data += 360;//解决跨越0度的问题
     }
     error_data = delta_data - expect_data;//计算误差
@@ -551,20 +1238,23 @@ void turnleft_pid(void){
             //printf("error_data：%f\n", error_data);
         }
         delta_data = IMU_data.data - last_data;//做差
-        if (last_data > 0 && IMU_data.data < 0) {
+        if (last_data > 0 && IMU_data.data < 0 && delta_data<-180) {
             delta_data += 360;//解决跨越0度的问题
         }
         error_data = delta_data - expect_data;//计算误差
     }
 }
+
+
+
 void normal_pid(float target_data) {
     last_data = initial_angel + target_data;
     delta_data = IMU_data.data - last_data;
-    if (last_data > 0 && IMU_data.data < 0) {
+    if (last_data > 0 && IMU_data.data < 0 && delta_data<-180) {
         delta_data += 360;//解决跨越0度的问题
     }
     error_data = delta_data;//计算误差
-    while (error_data > 0.5 || error_data < -0.5) {
+    while (error_data > 0.1 || error_data < -0.1) {
         if (motionflag) {
             motionflag = 0;
             printf("%f\n",error_data);
@@ -592,7 +1282,7 @@ void car_right_pid(unsigned int gom){
         delta_data += 360;//解决跨越0度的问题
     }
     error_data = delta_data;//计算误差
-    while ((error_data > 0.5 || error_data < -0.5)) {
+    while ((error_data > 0.1 || error_data < -0.1)) {
         if(motionflag) {
             motionflag = 0;
             if (error_data > 0) {

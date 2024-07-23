@@ -310,6 +310,55 @@ void turnleft(unsigned int gom)
 
 }
 //11459   9235
+
+void turnright(unsigned int gom)
+{
+    motor1forward;
+    motor2forward;
+    motor3back;
+    motor4back;
+
+    for(temp1=0 ;temp1<accelerate_smoothness;temp1++) {
+        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+        HAL_GPIO_WritePin(motor1_GPIO_Port, motor1_Pin, SET);
+        HAL_GPIO_WritePin(motor2_GPIO_Port, motor2_Pin, SET);
+        HAL_GPIO_WritePin(motor3_GPIO_Port, motor3_Pin, SET);
+        HAL_GPIO_WritePin(motor4_GPIO_Port, motor4_Pin, SET);
+        delay_us(150);
+        HAL_GPIO_WritePin(motor1_GPIO_Port, motor1_Pin, RESET);
+        HAL_GPIO_WritePin(motor2_GPIO_Port, motor2_Pin, RESET);
+        HAL_GPIO_WritePin(motor3_GPIO_Port, motor3_Pin, RESET);
+        HAL_GPIO_WritePin(motor4_GPIO_Port, motor4_Pin, RESET);
+        delay_us(acce_time[temp1]);
+    }
+    for(int i =0 ;i<(gom-2*accelerate_smoothness);i++) {
+        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+        HAL_GPIO_WritePin(motor1_GPIO_Port, motor1_Pin, SET);
+        HAL_GPIO_WritePin(motor2_GPIO_Port, motor2_Pin, SET);
+        HAL_GPIO_WritePin(motor3_GPIO_Port, motor3_Pin, SET);
+        HAL_GPIO_WritePin(motor4_GPIO_Port, motor4_Pin, SET);
+        delay_us(150);
+        HAL_GPIO_WritePin(motor1_GPIO_Port, motor1_Pin, RESET);
+        HAL_GPIO_WritePin(motor2_GPIO_Port, motor2_Pin, RESET);
+        HAL_GPIO_WritePin(motor3_GPIO_Port, motor3_Pin, RESET);
+        HAL_GPIO_WritePin(motor4_GPIO_Port, motor4_Pin, RESET);
+        delay_us(acce_time[accelerate_smoothness-1]);
+    }
+    for(temp1=0 ;temp1<accelerate_smoothness;temp1++) {
+        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+        HAL_GPIO_WritePin(motor1_GPIO_Port, motor1_Pin, SET);
+        HAL_GPIO_WritePin(motor2_GPIO_Port, motor2_Pin, SET);
+        HAL_GPIO_WritePin(motor3_GPIO_Port, motor3_Pin, SET);
+        HAL_GPIO_WritePin(motor4_GPIO_Port, motor4_Pin, SET);
+        delay_us(150);
+        HAL_GPIO_WritePin(motor1_GPIO_Port, motor1_Pin, RESET);
+        HAL_GPIO_WritePin(motor2_GPIO_Port, motor2_Pin, RESET);
+        HAL_GPIO_WritePin(motor3_GPIO_Port, motor3_Pin, RESET);
+        HAL_GPIO_WritePin(motor4_GPIO_Port, motor4_Pin, RESET);
+        delay_us(acce_time[accelerate_smoothness-1-temp1]);
+    }
+}
+
 void gofistline()
 {
     motor1forward;
