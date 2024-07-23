@@ -21,5 +21,6 @@ void layout3();
 void layout1_temp();
 void layout2_temp();
 void layout3_temp();
-void microposition(uint16_t *x, uint16_t *y);
+void microposition(volatile uint16_t *x, volatile uint16_t *y);
+void microposition0(uint16_t *x, uint16_t *y);
 #endif

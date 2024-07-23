@@ -167,12 +167,13 @@ int main(void)
         delay_ms(3000);
         position0;
         while (QRCODE[0] == 0);//等待二维码识别
-        while (color != QRCODE[0]);
-////      {
-////      // printf("color:%d\n",color);
-////      }
-        microposition(&X, &Y);
-        fistpick();
+//        while (color != QRCODE[0]);
+//////      {
+//////      // printf("color:%d\n",color);
+//////      }
+//        servo_open;
+//        microposition(&X, &Y);
+//        fistpick();
         for(;;);
         servo_open;
         initial_angel = IMU_data.data;
@@ -189,7 +190,8 @@ int main(void)
 //        }
 
         
-        gotarget_s(9225);
+        gotarget_s(4800);
+        gotarget_s(4425);
         normal_pid(0);
         car_right_pid(400);
         normal_pid(0);
@@ -997,70 +999,7 @@ int main(void)
 
 
 
-        for (;;);
-        delay_ms(500);
-        car_left_pid(2000);
-        turnleft_pid();
-        servo_open;
-        for (;;);
 
-        for (;;);
-        delay_ms(1000);
-        car_left_pid(1000);
-        gotarget_s(4900);
-        gotarget_s(4425);
-        car_right_pid(200);
-        fistpick();
-        layin1();
-        for (;;);
-        servo_open;
-        layout1_temp();
-        gotarget_s(1000);
-        layout2_temp();
-        gotarget_s(1000);
-        layout3_temp();
-
-        for(;;);
-        secondpick();
-        layin1();
-        position0;
-        delay_ms(50);
-        secondpick();
-        layin2();
-        position0;
-        delay_ms(50);
-        secondpick();
-        layin3();
-        position0;
-        for(;;);
-        position1;
-        servo_open;
-        elevator_down(4000);
-        servo_close;
-
-        elevator_up(4000);
-
-        for(;;);
-        servo_open;
-        elevator_down(7000);
-        servo_close;
-        delay_ms(10);
-        elevator_up(7000);
-        position1;
-        servo_open;
-        delay_ms(10);
-        for(;;);
-
-        servo_open;
-        car_left(700);//左移出场
-        gotarget_s(4900);//第一段路
-        delay_ms(500);//二维码
-
-        gotarget_s(4420);//第二段路
-
-        delay_ms(50);//准备夹物料
-        elevator_down(1700);
-        car_right(200);//靠近物料
 
 
 
@@ -1210,7 +1149,7 @@ void Get_Data(void)
     X = data_Integer_calculate(data_X_len, data_X_S);
     Y = data_Integer_calculate(data_Y_len, data_Y_S);
     r = data_Integer_calculate(data_r_len, data_r_S);
-    // printf("%d,%d,%d,%d\r\n", color,X,Y, r);
+    printf("%d,%d,%d,%d\r\n", color,X,Y, r);
 }
 void turnleft_pid(void){
 
